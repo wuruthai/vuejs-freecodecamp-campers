@@ -9,8 +9,10 @@
 		<tr>
 			<th>{{th1}}</th>
 			<th>{{th2}}</th>
-			<th>{{th3}}</th>
-			<th>{{th4}}</th>
+			<th v-on:click="sortCampers(recent)">{{th3}}&dArr;
+
+			</th>
+			<th v-on:click="sortCampers(alltime)">{{th4}} &dArr;</th>
 		</tr>
 		<camperlist :campers="campers"></camperlist>
 	</table>
@@ -34,12 +36,51 @@ export default {
 			th2: 'Camper Name',
 			th3: 'Last 30 Days',
 			th4: 'Alltime',
-			campers: []
+			campers: [],
+			alltime: "alltime",
+			recent: "recent",
+			recentStatus: true,
+			allTimeStatus: false,
 		}
 	},
 	methods: {
 
+		sortCampers(col) {
+			let campers = this.campers;
+			let allTimeStatus = this.allTimeStatus;
+			let recentStatus = this.recentStatus;
+
+			if (col === "alltime") {
+				campers.sort((a, b) => {
+
+					if (allTimeStatus === true) {
+						return b.alltime - a.alltime;
+					} else {
+						return a.alltime - b.alltime;
+					}
+				});
+				this.allTimeStatus = !allTimeStatus;
+			}
+
+
+			if (col === "recent") {
+				campers.sort((a, b) => {
+
+					if (recentStatus === true) {
+						return b.recent - a.recent;
+					} else {
+						return a.recent - b.recent;
+					}
+				});
+				this.recentStatus = !recentStatus;
+			}
+
+
+
+			this.campers = campers;
+		}
 	},
+
 	created() {
 		fetch("https://fcctop100.herokuapp.com/api/fccusers/top/recent")
 			.then((res) => {
@@ -56,8 +97,6 @@ export default {
 </script>
 
 <style>
-#app {}
-
 header {
 	display: block;
 	background-color: green;
